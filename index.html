@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <style>
+    :root {
+      --size: 30px;
+      --color: #000;
+      --duration: 2s;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    img {
+      width: 100px;
+    }
+    span {
+      width: var(--size);
+      height: calc(var(--size) / 4);
+      position: relative;
+      display: block;
+    }
+    div {
+      width: calc(var(--size) / 4);
+      height: calc(var(--size) / 4);
+      position: absolute;
+      left: 0%;
+      top: 0;
+      border-radius: 2px;
+      background: var(--color);
+      transform: translateX(-50%) rotate(45deg) scale(0);
+      animation: diamonds var(--duration) linear infinite;
+    }
+    div:nth-child(1) {
+      animation-delay: calc(var(--duration) * 2 / 3 * -1);
+    }
+    div:nth-child(2) {
+      animation-delay: calc(var(--duration) * 2 / 3 * -2);
+    }
+    div:nth-child(3) {
+      animation-delay: calc(var(--duration) * 2 / 3 * -3);
+    }
+    p {
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-size: 12pt;
+      font-style: italic;
+      font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    }
+
+    @keyframes diamonds {
+      50% {
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg) scale(1);
+      }
+      100% {
+        left: 100%;
+        transform: translateX(-50%) rotate(45deg) scale(0);
+      }
+    }
+  </style>
+  <body>
+    <img src="./assets/logo.png" alt="logo" />
+    <p>Starting Application</p>
+    <span>
+      <div></div>
+      <div></div>
+      <div></div>
+    </span>
+  </body>
+</html>
