@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 import { execFile } from 'node:child_process';
 
@@ -36,42 +36,39 @@ const stopMaybe = async () => {
   }
 }
 
-const createWindow = () => {
+const createWindow = async () => {
   // Create the browser window.
   const window = new BrowserWindow({
-    height: 700,
-    width: 1000,
+    height: 750,
+    width: 1250,
     show: false,
-    frame: false,
+    center: true,
     titleBarStyle: 'hidden',
     trafficLightPosition: { x: 15, y: 15 },
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      webviewTag: true,
     },
   });
 
   window.on('ready-to-show', window.show);
-  return window;
-};
 
-const loadIndex = async (window: BrowserWindow) => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     await window.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
     await window.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
-}
 
-const loadMaybe = async (window: BrowserWindow) => {
-  await window.loadURL('http://localhost:3000');
-}
+  return window;
+};
 
 app.whenReady().then(async () => {
-  const window = createWindow();
+  ipcMain.handle('check', async () => initialized);
 
-  await loadIndex(window);
+  const window = await createWindow();
   await startMaybe();
-  loadMaybe(window);
+
+  window.webContents.send('start');
 });
 
 app.on('window-all-closed', () => {
@@ -82,10 +79,7 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    const window = createWindow();
-
-    if (initialized) loadMaybe(window);
-    else loadIndex(window);
+    createWindow();
   }
 });
 
